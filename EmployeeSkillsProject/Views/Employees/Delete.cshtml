@@ -1,0 +1,66 @@
+﻿@model EmployeeSkillsManagement.Models.Employee
+
+@{
+    ViewData["Title"] = "Delete Employee";
+}
+
+<h2 class="text-danger">
+    Delete Employee
+</h2>
+
+<div class="alert alert-warning">
+
+    Are you sure you want to delete this employee?
+
+</div>
+
+<div class="card">
+
+    <div class="card-body">
+
+        <p>
+            <strong>Name:</strong>
+            @Model.FirstName @Model.LastName
+        </p>
+
+        <p>
+            <strong>Date of Birth:</strong>
+            @Model.DateOfBirth.ToString("dd MMM yyyy")
+        </p>
+
+        <p>
+            <strong>Phone:</strong>
+            @Model.Phone
+        </p>
+
+        <p>
+
+            <strong>Skills:</strong>
+
+            @string.Join(", ",
+                Model.EmployeeSkills
+                .Select(es => es.Skill.Name))
+
+        </p>
+
+        <form asp-action="Delete"
+              method="post">
+
+            <input type="hidden"
+                   asp-for="Id" />
+
+            <button type="submit"
+                    class="btn btn-danger">
+                Yes, Delete
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>

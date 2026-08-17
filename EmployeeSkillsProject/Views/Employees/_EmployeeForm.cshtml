@@ -1,0 +1,198 @@
+﻿@model EmployeeSkillsManagement.ViewModels.EmployeeViewModel
+
+<div asp-validation-summary="ModelOnly"
+     class="text-danger">
+</div>
+
+<div class="mb-3">
+
+    <label asp-for="FirstName"
+           class="form-label">
+
+    </label>
+
+    <input asp-for="FirstName"
+           class="form-control"
+           placeholder="Enter First Name">
+
+
+    <span asp-validation-for="FirstName"
+          class="text-danger">
+    </span>
+
+</div>
+
+<div class="mb-3">
+
+    <label asp-for="LastName"
+           class="form-label">
+    </label>
+
+    <input asp-for="LastName"
+           class="form-control" 
+           placeholder="Enter Last Name">
+
+
+    <span asp-validation-for="LastName"
+          class="text-danger">
+    </span>
+
+</div>
+
+<div class="mb-3">
+
+    <label asp-for="DateOfBirth" class="form-label">
+        Date of Birth
+    </label>
+
+    <input type="date"
+           id="DateOfBirth"
+           name="DateOfBirth"
+           value="@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("yyyy-MM-dd") : "")"
+           class="form-control"
+           min="1900-01-01"
+           max="@DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd")" />
+
+
+  @*   <input type="date"
+           id="DateOfBirth"
+           name="DateOfBirth"
+           value=""
+           class="form-control"
+           min="1900-01-01"
+           max="@DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd")" /> *@
+
+    <span asp-validation-for="DateOfBirth"
+          class="text-danger">
+    </span>
+
+</div>
+<div class="mb-3">
+
+    <label asp-for="Phone"
+           class="form-label">
+    </label>
+
+    <input asp-for="Phone"
+           class="form-control"
+           type="text"
+           inputmode="numeric"
+           maxlength="10"
+           placeholder="Enter 10-digit mobile number" />
+
+    <span asp-validation-for="Phone"
+          class="text-danger"></span>
+
+</div>
+
+<div class="mb-3">
+
+    <label class="form-label">Select Skill</label>
+
+    <div class="input-group">
+
+        <select id="skillDropdown" class="form-select">
+            <option value="">-- Select Skill --</option>
+
+            @foreach (var skill in Model.Skills)
+            {
+                <option value="@skill.Id">
+                    @skill.Name
+                </option>
+            }
+        </select>
+
+        <button type="button"
+                class="btn btn-primary"
+                onclick="addSkill()">
+            Add Skill
+        </button>
+
+    </div>
+
+</div>
+
+<div class="mb-3">
+
+    <label class="form-label">Selected Skills</label>
+
+    <div id="selectedSkills"
+         class="border rounded p-3"
+         style="min-height: 60px;">
+
+        @foreach (var skill in Model.Skills.Where(s => s.IsSelected))
+        {
+            <div class="badge bg-primary me-2 mb-2 p-2"
+                 id="skill-@skill.Id">
+
+                @skill.Name
+
+                <button type="button"
+                        class="btn-close btn-close-white ms-2"
+                        aria-label="Remove"
+                        onclick="removeSkill(@skill.Id)">
+                </button>
+
+                <input type="hidden"
+                       name="SelectedSkillIds"
+                       value="@skill.Id" />
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+<script>
+
+    function addSkill() {
+        var dropdown = document.getElementById("skillDropdown");
+        var skillId = dropdown.value;
+        var skillName =
+            dropdown.options[dropdown.selectedIndex].text;
+        if (skillId === "") {
+            alert("Please select a skill.");
+            return;
+        }
+        var existingSkill =
+            document.getElementById("skill-" + skillId);
+        if (existingSkill) {
+            alert("This skill is already selected.");
+            return;
+        }
+        var selectedSkills =
+            document.getElementById("selectedSkills");
+        var skillHtml = `
+                <div class="badge bg-primary me-2 mb-2 p-2"
+                     id="skill-${skillId}"> ${skillName}
+
+                    <button type="button"
+                            class="btn-close btn-close-white ms-2"
+                            aria-label="Remove"
+                            onclick="removeSkill(${skillId})">
+                    </button>
+
+                    <input type="hidden"
+                           name="SelectedSkillIds"
+                           value="${skillId}" />
+                </div>
+            `;
+
+        selectedSkills.insertAdjacentHTML(
+            "beforeend",
+            skillHtml
+        );
+        dropdown.value = "";
+    }
+
+
+    function removeSkill(skillId) {
+        var skill =
+            document.getElementById("skill-" + skillId);
+        if (skill) {
+            skill.remove();
+        }
+    }
+
+</script>
